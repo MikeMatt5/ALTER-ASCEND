@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The System</title>
+
+<style>
+:root {
+    --bg: #080d18;
+    --panel: #111a2b;
+    --panel-light: #17243a;
+    --blue: #38bdf8;
+    --text: #e6f1ff;
+    --muted: #91a4bd;
+    --border: #243750;
+    --green: #4ade80;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 28px 18px 60px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+header {
+    text-align: center;
+    padding: 20px 0 28px;
+}
+
+.eyebrow {
+    color: var(--blue);
+    letter-spacing: 4px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+h1 {
+    font-size: clamp(32px, 7vw, 52px);
+    letter-spacing: 5px;
+    color: var(--blue);
+    margin: 12px 0;
+    text-shadow: 0 0 24px #38bdf833;
+}
+
+.subtitle {
+    color: var(--muted);
+    margin: 0;
+}
+
+h2 {
+    font-size: 18px;
+    letter-spacing: 1px;
+    margin: 0 0 18px;
+}
+
+h3 {
+    font-size: 15px;
+    margin: 0;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 22px;
+}
+
+.section-label {
+    color: var(--blue);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.stat-box {
+    background: var(--panel-light);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 17px;
+}
+
+.stat-name {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 9px;
+}
+
+.stat-value {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.blue {
+    color: var(--blue);
+}
+
+.green {
+    color: var(--green);
+}
+
+.status-row, .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.status-row {
+    margin: 16px 0;
+}
+
+.status-value {
+    text-align: right;
+    font-weight: bold;
+}
+
+.xp-track {
+    width: 100%;
+    height: 13px;
+    background: #080d18;
+    border: 1px solid #29405a;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.xp-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #0284c7, #38bdf8);
+    border-radius: 20px;
+    transition: width 0.35s ease;
+}
+
+.xp-labels {
+    display: flex;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 9px;
+}
+
+.stats-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.stat-card {
+    background: var(--panel-light);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 15px;
+}
+
+.stat-row {
+    margin-bottom: 12px;
+}
+
+.stat-number {
+    color: var(--blue);
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.mini-track {
+    background: #080d18;
+    height: 5px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.mini-fill {
+    background: var(--blue);
+    height: 100%;
+    border-radius: 10px;
+}
+
+.quest {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    background: var(--panel-light);
+    border: 1px solid var(--border);
+    padding: 15px;
+    border-radius: 9px;
+    margin-bottom: 10px;
+}
+
+.quest.completed {
+    border-color: #226744;
+    opacity: 0.7;
+}
+
+.quest.completed .quest-title {
+    text-decoration: line-through;
+}
+
+.quest-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.quest-title {
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.quest-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+}
+
+.quest-xp {
+    color: var(--blue);
+    font-weight: bold;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+button, input, select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.complete-btn {
+    background: transparent;
+    color: var(--blue);
+    border: 1px solid var(--blue);
+    border-radius: 7px;
+    padding: 9px 11px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.complete-btn:hover {
+    background: #38bdf81a;
+}
+
+.completed .complete-btn {
+    color: var(--green);
+    border-color: var(--green);
+}
+
+.primary-btn {
+    background: var(--blue);
+    color: #06111e;
+    border: none;
+    border-radius: 7px;
+    padding: 12px 16px;
+    font-weight: bold;
+}
+
+.primary-btn:hover {
+    background: #7dd3fc;
+}
+
+.secondary-btn {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 10px 13px;
+}
+
+.quest-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+input, select {
+    min-width: 0;
+    width: 100%;
+    background: #080d18;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 12px;
+}
+
+input:focus, select:focus {
+    outline: 1px solid var(--blue);
+}
+
+.progress-note, .empty-note {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+#message {
+    display: none;
+    background: #102a24;
+    border: 1px solid #226744;
+    color: var(--green);
+    padding: 13px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+}
+
+footer {
+    text-align: center;
+    color: #657891;
+    font-size: 11px;
+    padding: 15px 0;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 650px) {
+    body {
+        padding: 16px 12px 35px;
+    }
+
+    .dashboard {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stats-list {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        padding: 16px;
+    }
+
+    .quest {
+        flex-wrap: wrap;
+    }
+
+    .quest-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .quest-form input {
+        grid-column: 1 / -1;
+    }
+
+    .quest-form button {
+        grid-column: 1 / -1;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+    <div class="eyebrow">PERSONAL PROGRESSION PROTOCOL</div>
+    <h1>THE SYSTEM</h1>
+    <p class="subtitle">Your life. Your quests. Your evolution.</p>
+</header>
+
+<div id="message" role="status"></div>
+
+<section class="panel">
+    <div class="section-label">PLAYER STATUS</div>
+    <div class="dashboard">
+        <div class="stat-box">
+            <div class="stat-name">CURRENT LEVEL</div>
+            <div class="stat-value blue" id="level">1</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-name">CURRENT RANK</div>
+            <div class="stat-value blue" id="rank">E</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-name">QUESTS COMPLETED</div>
+            <div class="stat-value" id="total-completed">0</div>
+        </div>
+    </div>
+
+    <div class="status-row">
+        <span>Experience Points</span>
+        <span class="status-value" id="xp-text">0 / 100 XP</span>
+    </div>
+    <div class="xp-track">
+        <div class="xp-fill" id="xp-fill"></div>
+    </div>
+    <div class="xp-labels">
+        <span id="xp-current">0 XP</span>
+        <span id="xp-needed">100 XP to next level</span>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="section-label">CHARACTER DEVELOPMENT</div>
+    <h2>Character Stats</h2>
+    <div class="stats-list" id="stats-list"></div>
+    <p class="progress-note">
+        Your stats increase when you complete quests associated with them.
+    </p>
+</section>
+
+<section class="panel">
+    <div class="section-label">DAILY OBJECTIVES</div>
+    <h2>Daily Quests</h2>
+    <p class="progress-note">
+        Complete real-life missions to earn XP and improve your character.
+        Your daily quests refresh each new day.
+    </p>
+
+    <div id="quest-list"></div>
+
+    <div class="status-row">
+        <span>Today's progress</span>
+        <span id="daily-progress" class="blue">0 / 0</span>
+    </div>
+    <div class="xp-track">
+        <div class="xp-fill" id="daily-fill"></div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="section-label">CREATE YOUR OWN MISSION</div>
+    <h2>Custom Quest</h2>
+    <form id="quest-form" class="quest-form">
+        <input
+            id="quest-name"
+            type="text"
+            maxlength="70"
+            placeholder="Enter your quest..."
+            aria-label="Quest name"
+            required
+        >
+        <select id="quest-stat" aria-label="Stat to improve">
+            <option value="Discipline">Discipline</option>
+            <option value="Strength">Strength</option>
+            <option value="Intelligence">Intelligence</option>
+            <option value="Wealth">Wealth</option>
+            <option value="Creativity">Creativity</option>
+            <option value="Consistency">Consistency</option>
+        </select>
+        <select id="quest-reward" aria-label="XP reward">
+            <option value="10">10 XP</option>
+            <option value="20" selected>20 XP</option>
+            <option value="30">30 XP</option>
+            <option value="50">50 XP</option>
+        </select>
+        <button class="primary-btn" type="submit">Add Quest</button>
+    </form>
+</section>
+
+<section class="panel">
+    <div class="section-label">YOUR JOURNEY</div>
+    <h2>Achievements</h2>
+    <div class="stats-list" id="achievements"></div>
+</section>
+
+<section class="panel">
+    <div class="section-label">SYSTEM SETTINGS</div>
+    <h2>Progress Management</h2>
+    <p class="progress-note">
+        Your progress is saved in this browser on this device.
+        Clearing browser data may erase it.
+    </p>
+    <button class="secondary-btn" id="reset-button" type="button">
+        Reset All Progress
+    </button>
+</section>
+
+<footer>THE SYSTEM // VERSION 1.0</footer>
+
+</div>
+
+<script>
+const STAT_NAMES = [
+    "Strength",
+    "Intelligence",
+    "Discipline",
+    "Wealth",
+    "Creativity",
+    "Consistency"
+];
+
+const DEFAULT_QUESTS = [
+    {
+        id: "workout",
+        title: "Complete a workout",
+        description: "Train your body and build strength.",
+        xp: 25,
+        stat: "Strength"
+    },
+    {
+        id: "learn",
+        title: "Learn something new",
+        description: "Read, study, or practice a useful skill.",
+        xp: 20,
+        stat: "Intelligence"
+    },
+    {
+        id: "discipline",
+        title: "Finish your hardest task",
+        description: "Complete one important task you have been avoiding.",
+        xp: 20,
+        stat: "Discipline"
+    },
+    {
+        id: "money",
+        title: "Take a financial step",
+        description: "Save money, review spending, or work toward income.",
+        xp: 15,
+        stat: "Wealth"
+    },
+    {
+        id: "creative",
+        title: "Practice a skill",
+        description: "Create something or work on a personal project.",
+        xp: 15,
+        stat: "Creativity"
+    },
+    {
+        id: "consistent",
+        title: "Follow your daily routine",
+        description: "Stick to the plan you made for yourself.",
+        xp: 15,
+        stat: "Consistency"
+    }
+];
+
+const STORAGE_KEY = "theSystemSaveV1";
+
+function todayKey() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+function freshState() {
+    return {
+        level: 1,
+        xp: 0,
+        totalXp: 0,
+        totalCompleted: 0,
+        stats: Object.fromEntries(STAT_NAMES.map(name => [name, 1])),
+        date: todayKey(),
+        customQuests: [],
+        completedToday: [],
+        history: {}
+    };
+}
+
+function loadState() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return freshState();
+
+        const saved = JSON.parse(raw);
+        const base = freshState();
+
+        const state = {
+            ...base,
+            ...saved,
+            stats: { ...base.stats, ...(saved.stats || {}) },
+            customQuests: Array.isArray(saved.customQuests)
+                ? saved.customQuests
+                : [],
+            completedToday: Array.isArray(saved.completedToday)
+                ? saved.completedToday
+                : [],
+            history: saved.history || {}
+        };
+
+        if (state.date !== todayKey()) {
+            state.date = todayKey();
+            state.completedToday = [];
+        }
+
+        return state;
+    } catch (error) {
+        return freshState();
+    }
+}
+
+let state = loadState();
+let messageTimer;
+
+function saveState() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {
+        showMessage("Your browser could not save progress. Check your browser storage settings.");
+    }
+}
+
+function showMessage(text) {
+    const box = document.getElementById("message");
+    box.textContent = text;
+    box.style.display = "block";
+
+    clearTimeout(messageTimer);
+    messageTimer = setTimeout(() => {
+        box.style.display = "none";
+    }, 3500);
+}
+
+function rankForLevel(level) {
+    if (level >= 50) return "S";
+    if (level >= 35) return "A";
+    if (level >= 25) return "B";
+    if (level >= 15) return "C";
+    if (level >= 7) return "D";
+    return "E";
+}
+
+function xpNeeded() {
+    return 100 + (state.level - 1) * 25;
+}
+
+function allQuests() {
+    return [
+        ...DEFAULT_QUESTS,
+        ...state.customQuests
+    ];
+}
+
+function completedCount() {
+    return state.totalCompleted;
+}
+
+function renderStatus() {
+    const needed = xpNeeded();
+
+    document.getElementById("level").textContent = state.level;
+    document.getElementById("rank").textContent = rankForLevel(state.level);
+    document.getElementById("total-completed").textContent = completedCount();
+    document.getElementById("xp-text").textContent =
+        `${state.xp} / ${needed} XP`;
+    document.getElementById("xp-current").textContent = `${state.xp} XP`;
+    document.getElementById("xp-needed").textContent =
+        `${needed - state.xp} XP to next level`;
+
+    document.getElementById("xp-fill").style.width =
+        `${Math.min(100, (state.xp / needed) * 100)}%`;
+}
+
+function renderStats() {
+    const list = document.getElementById("stats-list");
+    list.replaceChildren();
+
+    STAT_NAMES.forEach(name => {
+        const value = state.stats[name] || 1;
+        const card = document.createElement("div");
+        card.className = "stat-card";
+
+        const row = document.createElement("div");
+        row.className = "stat-row";
+
+        const label = document.createElement("span");
+        label.textContent = name;
+
+        const number = document.createElement("span");
+        number.className = "stat-number";
+        number.textContent = value;
+
+        row.append(label, number);
+
+        const track = document.createElement("div");
+        track.className = "mini-track";
+
+        const fill = document.createElement("div");
+        fill.className = "mini-fill";
+        fill.style.width = `${Math.min(100, value)}%`;
+
+        track.append(fill);
+        card.append(row, track);
+        list.append(card);
+    });
+}
+
+function makeQuestElement(quest) {
+    const completed = state.completedToday.includes(quest.id);
+
+    const card = document.createElement("div");
+    card.className = "quest" + (completed ? " completed" : "");
+
+    const info = document.createElement("div");
+    info.className = "quest-info";
+
+    const title = document.createElement("div");
+    title.className = "quest-title";
+    title.textContent = quest.title;
+
+    const meta = document.createElement("div");
+    meta.className = "quest-meta";
+    meta.textContent = `${quest.description || "Custom mission"} • +1 ${quest.stat}`;
+
+    info.append(title, meta);
+
+    const reward = document.createElement("div");
+    reward.className = "quest-xp";
+    reward.textContent = `+${quest.xp} XP`;
+
+    const button = document.createElement("button");
+    button.className = "complete-btn";
+    button.type = "button";
+    button.textContent = completed ? "✓ Done" : "Complete";
+
+    button.disabled = completed;
+    button.setAttribute(
+        "aria-label",
+        completed ? `${quest.title} completed` : `Complete ${quest.title}`
+    );
+
+    button.addEventListener("click", () => completeQuest(quest.id));
+
+    card.append(info, reward, button);
+    return card;
+}
+
+function renderQuests() {
+    const list = document.getElementById("quest-list");
+    list.replaceChildren();
+
+    const quests = allQuests();
+
+    quests.forEach(quest => {
+        list.append(makeQuestElement(quest));
+    });
+
+    const done = quests.filter(q =>
+        state.completedToday.includes(q.id)
+    ).length;
+
+    document.getElementById("daily-progress").textContent =
+        `${done} / ${quests.length}`;
+
+    document.getElementById("daily-fill").style.width =
+        `${quests.length ? (done / quests.length) * 100 : 0}%`;
+}
+
+function renderAchievements() {
+    const list = document.getElementById("achievements");
+    list.replaceChildren();
+
+    const achievements = [
+        {
+            title: "First Mission",
+            description: "Complete your first quest.",
+            unlocked: state.totalCompleted >= 1
+        },
+        {
+            title: "Getting Started",
+            description: "Complete 10 quests.",
+            unlocked: state.totalCompleted >= 10
+        },
+        {
+            title: "Level 5",
+            description: "Reach Level 5.",
+            unlocked: state.level >= 5
+        },
+        {
+            title: "Dedicated",
+            description: "Complete 50 quests.",
+            unlocked: state.totalCompleted >= 50
+        }
+    ];
+
+    achievements.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "stat-card";
+
+        const title = document.createElement("h3");
+        title.textContent = `${item.unlocked ? "🏆" : "🔒"} ${item.title}`;
+        if (item.unlocked) title.className = "green";
+
+        const description = document.createElement("div");
+        description.className = "quest-meta";
+        description.style.marginTop = "8px";
+        description.textContent = item.description;
+
+        card.append(title, description);
+        list.append(card);
+    });
+}
+
+function render() {
+    renderStatus();
+    renderStats();
+    renderQuests();
+    renderAchievements();
+}
+
+function completeQuest(id) {
+    if (state.date !== todayKey()) {
+        state.date = todayKey();
+        state.completedToday = [];
+    }
+
+    const quest = allQuests().find(q => q.id === id);
+    if (!quest || state.completedToday.includes(id)) return;
+
+    const oldLevel = state.level;
+
+    state.completedToday.push(id);
+    state.totalCompleted += 1;
+    state.xp += quest.xp;
+    state.totalXp += quest.xp;
+
+    state.stats[quest.stat] = (state.stats[quest.stat] || 1) + 1;
+
+    while (state.xp >= xpNeeded()) {
+        state.xp -= xpNeeded();
+        state.level += 1;
+    }
+
+    saveState();
+    render();
+
+    if (state.level > oldLevel) {
+        showMessage(`LEVEL UP! You reached Level ${state.level}. Keep going!`);
+    } else {
+        showMessage(`Quest complete! You earned ${quest.xp} XP and +1 ${quest.stat}.`);
+    }
+}
+
+document.getElementById("quest-form").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const nameInput = document.getElementById("quest-name");
+    const statInput = document.getElementById("quest-stat");
+    const rewardInput = document.getElementById("quest-reward");
+
+    const name = nameInput.value.trim();
+    if (!name) return;
+
+    state.customQuests.push({
+        id: "custom-" + Date.now() + "-" + Math.random().toString(16).slice(2),
+        title: name,
+        description: "Your custom mission",
+        xp: Number(rewardInput.value),
+        stat: statInput.value
+    });
+
+    saveState();
+    render();
+    nameInput.value = "";
+    showMessage("Custom quest added!");
+});
+
+document.getElementById("reset-button").addEventListener("click", () => {
+    const confirmed = confirm(
+        "Reset ALL your level, XP, stats, quests, and saved progress? This cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    state = freshState();
+    saveState();
+    render();
+    showMessage("Your progress has been reset.");
+});
+
+render();
+saveState();
+</script>
+</body>
+</html>
